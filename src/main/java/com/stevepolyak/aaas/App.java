@@ -18,7 +18,6 @@ public class App {
 
 	private static final String AAAS_MISCONCEPTION_URL = "http://strandmaps.nsdl.org/cms1-2/jsapi/api_v1/bubble/aaasMisconception.jsp?";
 	private static final String BM_ID = "bmId";
-	private static int counter = 0;
 
 	public static void main(String argv[]) {
 
@@ -35,11 +34,10 @@ public class App {
 
 				boolean identifier = true;
 				List<Misconception> misconceptions = null;
-				
+
 				public void startElement(String uri, String localName,
 						String qName, Attributes attributes)
 						throws SAXException {
-					// System.out.println("Start Element :" + qName);
 					emit("<" + qName + ">");
 					if (qName.equalsIgnoreCase("identifier")) {
 						identifier = true;
@@ -48,8 +46,6 @@ public class App {
 
 				public void endElement(String uri, String localName,
 						String qName) throws SAXException {
-					// System.out.println("End Element :" + qName);
-					
 					if (qName.equalsIgnoreCase("oai_dc:dc")) {
 						writeMiscons();
 					}
@@ -67,28 +63,25 @@ public class App {
 							id = id.trim();
 						}
 						if (!StringUtils.isEmpty(id)) {
-							
-							//if (id.equals("SMS-BMK-0155")) {
-								misconceptions = crawler.crawl(id, BM_ID,
-										AAAS_MISCONCEPTION_URL);
-							//}
+							misconceptions = crawler.crawl(id, BM_ID,
+									AAAS_MISCONCEPTION_URL);
 						}
 						identifier = false;
 					}
 				}
-				
+
 				void writeMiscons() throws SAXException {
-					if(misconceptions == null) {
+					if (misconceptions == null) {
 						return;
 					}
-					if(misconceptions.size() < 1) {
+					if (misconceptions.size() < 1) {
 						return;
 					}
-					
-					for(Misconception m : misconceptions) {
+
+					for (Misconception m : misconceptions) {
 						emit("<dc:miscon>");
 						emit(m.getText() + "(id: " + m.getId() + ")(");
-						for(String value : m.getValues()) {
+						for (String value : m.getValues()) {
 							emit(value + " ");
 						}
 						emit(")</dc:miscon>");

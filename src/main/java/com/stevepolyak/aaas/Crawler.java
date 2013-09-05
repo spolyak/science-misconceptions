@@ -47,7 +47,7 @@ public class Crawler {
 			String results = getStringFromInputStream(response.getEntity()
 					.getContent());
 			if (results.toLowerCase().contains(NO_RESULTS)) {
-				System.out.println("AAAS server reports no content for: " + id);
+				System.out.println("No content for: " + id);
 				httpClient.getConnectionManager().shutdown();
 				return null;
 			} else {
@@ -63,26 +63,27 @@ public class Crawler {
 				Matcher misconMatcher = misConPattern.matcher(results);
 				while (misconMatcher.find()) {
 					Misconception mis = new Misconception();
-					//System.out.println(misconMatcher.group(1));
+
 					mis.setId(misconMatcher.group(1));
-					//System.out.println(misconMatcher.group(2));
 					mis.setText(misconMatcher.group(2));
 					String values = misconMatcher.group(3);
 					Matcher percentMatcher = percentagePattern.matcher(values);
 					while (percentMatcher.find()) {
 						mis.getValues().add(percentMatcher.group(1));
-						//System.out.println(percentMatcher.group(1));
 					}
 					misconceptions.add(mis);
 				}
-				
-				for(Misconception m : misconceptions) {
+
+				for (Misconception m : misconceptions) {
 					int count = 0;
-					for(String grade : grades) {
-					  String temp = m.getValues().get(count);
-					  m.getValues().set(count, "Grade " + grade.replace("&ndash;", "-") + " : " + temp + "%");
-					  count ++;
-				  }
+					for (String grade : grades) {
+						String temp = m.getValues().get(count);
+						m.getValues().set(
+								count,
+								"Grade " + grade.replace("&ndash;", "-")
+										+ " : " + temp + "%");
+						count++;
+					}
 				}
 			}
 
